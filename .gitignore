@@ -1,0 +1,14 @@
+node_modules/
+dist/
+release/
+
+runtime/backups/
+runtime/logs/
+runtime/config.json
+
+tmp-*.mjs
+
+.DS_Store
+Thumbs.db
+.env
+.env.*

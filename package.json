@@ -1,0 +1,60 @@
+{
+  "name": "antigravity-blocks-orchestrator",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Portable Blocks-based Antigravity patch orchestrator",
+  "main": "dist/app/main.js",
+  "author": "OpenAI Codex",
+  "scripts": {
+    "clean": "node ./scripts/clean.mjs",
+    "build": "node ./scripts/build.mjs",
+    "build:watch": "node ./scripts/build.mjs --watch",
+    "dev": "npm run build && electron .",
+    "dev:watch": "node ./scripts/dev-watch.mjs",
+    "start": "electron .",
+    "test": "npm run build && node --test ./tests/*.test.mjs",
+    "package:dir": "npm run build && electron-builder --dir",
+    "package:portable": "npm run build && node ./scripts/package-portable.mjs"
+  },
+  "build": {
+    "appId": "com.openai.antigravity.blocks",
+    "productName": "Antigravity Patcher",
+    "executableName": "AntigravityPatcher",
+    "directories": {
+      "output": "release",
+      "buildResources": "assets"
+    },
+    "files": [
+      "dist/app/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "assets/icon.ico",
+        "to": "icon.ico"
+      }
+    ],
+    "asar": true,
+    "win": {
+      "icon": "assets/icon.ico",
+      "signAndEditExecutable": false,
+      "target": [
+        "dir"
+      ],
+      "artifactName": "Antigravity-Patcher-${version}-${arch}.${ext}"
+    }
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "electron": "^35.0.3",
+    "electron-log": "^5.2.4",
+    "electron-builder": "^26.8.1",
+    "esbuild": "^0.25.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.8.2"
+  }
+}
