@@ -1,38 +1,20 @@
-# Antigravity Patcher
-
-Clean, portable Windows patch orchestration for Antigravity.
+<div align="center">
+  <h1>Antigravity Patcher</h1>
+  <p><strong><em>Clean, portable Windows patch orchestration for Antigravity.</em></strong></p>
+  <img src="./assets/preview.png" alt="Antigravity Patcher preview" width="100%" />
+</div>
 
 It ships as a desktop app with a modular block system: each patch is isolated, ordered, configurable, and reversible when supported.
 
-## Get Started
+## 🚀 Get Started
 
-### For most users
+### 📦 How to use
 
 Download the latest portable build from the [Releases page](https://github.com/BenSouchet/antigravity-patcher/releases).
 
 That is the recommended path if you just want to run the app.
 
-### For developers
-
-```powershell
-npm install
-npm run dev:watch
-```
-
-`npm run dev:watch` is the main development loop:
-
-- builds the app once
-- starts the block/app watcher
-- launches Electron
-- restarts Electron automatically when compiled output changes
-
-If you only want a one-shot local launch without the watcher:
-
-```powershell
-npm run dev
-```
-
-## Why This Project
+## ✨ Why This Project
 
 Antigravity Patcher avoids a giant one-off patch script.
 
@@ -44,7 +26,43 @@ Instead, it uses small focused blocks that can:
 - expose parameters to the UI
 - run in deterministic order through `executionOrder`
 
-## Modular Block Architecture
+## 🧩 Shipped Blocks
+
+Blocks are addons/components that do isolated tasks.
+
+| Block | Category | What it does |
+| --- | --- | --- |
+| `backup-core` | Core | Prepares the portable runtime folders and backup/log layout used by all mutating blocks. |
+| `auth-integrity` | Maintenance | Clears the cached `integrityService` state from `state.vscdb` so modified bundles do not stay blocked by stale integrity data. |
+| `extension-runtime` | Runtime | Applies the core runtime patch set. See the detailed breakdown below for the exact fixes and feature unlocks. |
+| `unleash-offline` | Runtime | Forces the Unleash path onto a local offline fallback and suppresses remaining Unleash log noise. |
+| `auto-run` | Automation | Auto-confirms terminal execution prompts so commands can run without manual approval. Includes `force` and `polite` modes. |
+| `auto-retry` | Automation | Automatically clicks retry/continue actions after a configurable delay with a configurable retry cap. |
+| `community-fixes` | Integration | Applies common Windows fixes for MCP config, shortcut CDP flags, and missing environment directories. |
+| `checksums` | Maintenance | Revalidates patched bundles, refreshes `product.json` checksums, and can disable the workbench integrity purity gate. |
+
+## 🛠️ The Extension Runtime Block
+
+`extension-runtime` is the main compatibility and feature block. It applies these following changes:
+
+- trims incompatible or undesired extension API proposals from `product.json` for extensions such as Copilot Chat, Python, Jupyter, ESLint, Java, C++, Live Share, and related tooling
+- adds the extra Python API proposals needed for the patched runtime, including `codeActionAI`, notebook variable/repl support, quick-pick tooltips, and terminal execution/data events
+- adds missing Python environment proposals including `terminalShellEnv` and `terminalDataWriteEvent`
+- restores the `antigravity.importAntigravitySettings` command entry in the extension manifest
+- restores the `antigravity.importAntigravityExtensions` command entry in the extension manifest
+- restores the `antigravity.prioritized.chat.open` command entry in the extension manifest
+- fills in the missing title for `git.antigravityCloneNonInteractive`
+- fills in the missing title for `git.antigravityGetRemoteUrl`
+- hardens the language server path so the client must be initialized before use instead of silently entering a broken state
+- guards user-status updates so they do not crash when the language server client is unavailable
+- patches workbench agent session registration so the session service is properly wired
+- auto-accepts the "Allow access to <path>" conversation-level file access prompt in the workbench flow
+- removes `require-trusted-types-for 'script'` from the patched workbench HTML files when present
+- writes a `{"type":"module"}` package file for the Chrome DevTools MCP runtime when it is missing
+
+In practice, this block is **the one** that brings back the bulk of the missing features and fix lot of the Antigravity IDE issues.
+
+## 🏗️ Modular Block Architecture
 
 Blocks live in `src/blocks/<category>/*.ts` and are compiled into `dist/blocks/<category>/*.js`.
 
@@ -69,7 +87,9 @@ Portable runtime data is kept alongside the app:
 - `runtime/backups/`
 - `runtime/logs/`
 
-## Block Template
+In the packaged portable release, `blocks/`, `config.json`, `backups/`, and `logs/` stay next to `AntigravityPatcher.exe`. The Electron runtime self-extracts into a temp directory at launch, but the app resolves its portable root from the original launcher directory.
+
+## 🧪 Block Template
 
 ```ts
 import { BlockDefinition } from "../../core/types";
@@ -119,41 +139,27 @@ const block: BlockDefinition = {
 export default block;
 ```
 
-## Shipped Blocks
+## 👨‍💻 For developers
 
-| Block | Category | What it does |
-| --- | --- | --- |
-| `backup-core` | Core | Prepares the portable runtime folders and backup/log layout used by all mutating blocks. |
-| `auth-integrity` | Maintenance | Clears the cached `integrityService` state from `state.vscdb` so modified bundles do not stay blocked by stale integrity data. |
-| `extension-runtime` | Runtime | Applies the core runtime patch set. See the detailed breakdown below for the exact fixes and feature unlocks. |
-| `unleash-offline` | Runtime | Forces the Unleash path onto a local offline fallback and suppresses remaining Unleash log noise. |
-| `auto-run` | Automation | Auto-confirms terminal execution prompts so commands can run without manual approval. Includes `force` and `polite` modes. |
-| `auto-retry` | Automation | Automatically clicks retry/continue actions after a configurable delay with a configurable retry cap. |
-| `community-fixes` | Integration | Applies common Windows fixes for MCP config, shortcut CDP flags, and missing environment directories. |
-| `checksums` | Maintenance | Revalidates patched bundles, refreshes `product.json` checksums, and can disable the workbench integrity purity gate. |
+```powershell
+npm install
+npm run dev:watch
+```
 
-## Extension Runtime Breakdown
+`npm run dev:watch` is the main development loop:
 
-`extension-runtime` is the main compatibility and feature block. It applies these changes:
+- builds the app once
+- starts the block/app watcher
+- launches Electron
+- restarts Electron automatically when compiled output changes
 
-- trims incompatible or undesired extension API proposals from `product.json` for extensions such as Copilot Chat, Python, Jupyter, ESLint, Java, C++, Live Share, and related tooling
-- adds the extra Python API proposals needed for the patched runtime, including `codeActionAI`, notebook variable/repl support, quick-pick tooltips, and terminal execution/data events
-- adds missing Python environment proposals including `terminalShellEnv` and `terminalDataWriteEvent`
-- restores the `antigravity.importAntigravitySettings` command entry in the extension manifest
-- restores the `antigravity.importAntigravityExtensions` command entry in the extension manifest
-- restores the `antigravity.prioritized.chat.open` command entry in the extension manifest
-- fills in the missing title for `git.antigravityCloneNonInteractive`
-- fills in the missing title for `git.antigravityGetRemoteUrl`
-- hardens the language server path so the client must be initialized before use instead of silently entering a broken state
-- guards user-status updates so they do not crash when the language server client is unavailable
-- patches workbench agent session registration so the session service is properly wired
-- auto-accepts the "Allow access to <path>" conversation-level file access prompt in the workbench flow
-- removes `require-trusted-types-for 'script'` from the patched workbench HTML files when present
-- writes a `{"type":"module"}` package file for the Chrome DevTools MCP runtime when it is missing
+If you only want a one-shot local launch without the watcher:
 
-In practice, this block is the one that brings back the bulk of the missing runtime behavior after bundle modifications.
+```powershell
+npm run dev
+```
 
-## Development Commands
+### ⚙️ Development Commands
 
 ```powershell
 npm install
@@ -169,19 +175,66 @@ npm run package:portable
 
 `npm run dev:watch` is the closest thing to hot reload in this repo: it rebuilds on change and restarts Electron automatically.
 
-## Portable Output
+## 📦 Build And Release
+
+### 🔨 Local build
+
+Use this when you want to produce a fresh local build:
+
+```powershell
+npm install
+npm test
+npm run build
+```
+
+### 🚀 Full release workflow
+
+Use this flow for a proper portable release:
+
+1. Bump the version:
+
+```powershell
+npm version <new-version> --no-git-tag-version
+```
+
+2. Run:
+
+```powershell
+npm install
+npm test
+npm run package:portable
+```
+
+3. Verify that `release/portable/` and `release/AntigravityPatcher.zip` were generated.
+4. Confirm the portable folder contains:
+
+- `release/portable/AntigravityPatcher.exe`
+- `release/portable/blocks/`
+- `release/portable/config.json`
+- `release/portable/backups/`
+- `release/portable/logs/`
+
+5. Create a new Github release for the matching version tag.
+6. Upload `release/AntigravityPatcher.zip` as the release asset.
+7. Publish the release.
+
+`npm run package:portable` rebuilds the app, creates a self-extracting portable executable, assembles the external `blocks/` and runtime files next to it, and generates the final zip.
+
+## 📁 Portable Output
 
 Packaging produces:
 
 - `release/portable/`
 - `release/AntigravityPatcher.zip`
 
-## Notes
+The portable zip contains a self-extracting `AntigravityPatcher.exe` plus an external `blocks/` folder. Keep `blocks/` next to the `.exe`.
+
+## 📝 Notes
 
 - This project is built for Windows.
 - User block selections and parameter values persist in `runtime/config.json`.
 
-## Disclaimer
+## ⚠️ Disclaimer
 
 This project is provided for educational purposes only.
 

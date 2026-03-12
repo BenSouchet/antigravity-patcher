@@ -4,6 +4,11 @@ import { ensureDir } from "./file-utils";
 
 export function getPortableRoot(): string {
   if (app.isPackaged) {
+    const portableExecutableDir = process.env.PORTABLE_EXECUTABLE_DIR?.trim();
+    if (portableExecutableDir) {
+      return portableExecutableDir;
+    }
+
     return path.dirname(app.getPath("exe"));
   }
 
