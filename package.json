@@ -1,10 +1,10 @@
 {
-  "name": "antigravity-blocks-orchestrator",
+  "name": "antigravity-patcher",
   "version": "0.1.0",
   "private": true,
-  "description": "Portable Blocks-based Antigravity patch orchestrator",
+  "description": "Antigravity Patcher desktop app",
   "main": "dist/app/main.js",
-  "author": "OpenAI Codex",
+  "author": "Open Source Contributors",
   "scripts": {
     "clean": "node ./scripts/clean.mjs",
     "build": "node ./scripts/build.mjs",
@@ -17,7 +17,7 @@
     "package:portable": "npm run build && node ./scripts/package-portable.mjs"
   },
   "build": {
-    "appId": "com.openai.antigravity.blocks",
+    "appId": "com.openai.antigravity.patcher",
     "productName": "Antigravity Patcher",
     "executableName": "AntigravityPatcher",
     "directories": {

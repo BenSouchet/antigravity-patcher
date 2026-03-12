@@ -295,7 +295,7 @@ function App(): React.JSX.Element {
   }
 
   if (!snapshot || !config) {
-    return <div className="app-shell"><div className="empty-state">Loading Blocks orchestrator…</div></div>;
+    return <div className="app-shell"><div className="empty-state">Loading Antigravity Patcher…</div></div>;
   }
 
   return (
@@ -304,7 +304,7 @@ function App(): React.JSX.Element {
         <div className="brand-block">
           <div className="brand-mark">AP</div>
           <div>
-            <div className="brand-kicker">Portable Blocks Orchestrator</div>
+            <div className="brand-kicker">Antigravity Patcher</div>
             <div className="brand-name">Antigravity Patcher</div>
           </div>
         </div>
